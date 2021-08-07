@@ -1,4 +1,9 @@
 .App {
   text-align: center;
 }
-
+.img-card {
+  margin: 10px;
+}
+.img-opacity{
+  opacity: 0.6;
+}
