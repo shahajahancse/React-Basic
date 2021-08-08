@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody,  CardImg, CardImgOverlay, CardTitle,/* CardText, CardTitle, CardImgOverlay  */} from "reactstrap";
+import { Card, CardBody, CardImg, CardImgOverlay, CardTitle} from "reactstrap";
 
 const MenuItem = props => {
     return (
@@ -12,7 +12,10 @@ const MenuItem = props => {
                         src={props.dish.image}>
                     </CardImg>
                     <CardImgOverlay>
-                        <CardTitle>{props.dish.name}</CardTitle>
+                        <CardTitle style={{ cursor: "pointer" }}
+                            onClick={props.DishSelect}>
+                            {props.dish.name}
+                        </CardTitle>
                     </CardImgOverlay>
                 </CardBody>
             </Card>
