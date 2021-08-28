@@ -3,7 +3,8 @@ import MenuItem from "./MenuItem";
 import DishDetail from "./DishDetail";
 import {CardColumns, Modal, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { connect } from "react-redux";
-import * as actionTypes from "../../redux/actionTypes";
+import { addComment, fetchDishes } from "../../redux/actionCreators";
+import Loading from "./loading";
 
 // map state to props
 const mapStateToProps = state => {
@@ -16,15 +17,8 @@ const mapStateToProps = state => {
 // map dispatch to props
 const mapDispatchToProps = dispatch => {
     return {
-        addComment: (dishId,author,rating,comment) => dispatch({
-            type: actionTypes.ADD_COMMENT,
-            payload: {
-                dishId: dishId,
-                author: author,
-                rating: rating,
-                comment: comment,
-            }
-        }),
+        addComment: (dishId,author,rating,comment) => dispatch(addComment(dishId,author,rating,comment)),
+        fetchDishes: () => dispatch(fetchDishes())
     }
 }
 
@@ -48,45 +42,57 @@ class Menu extends Component {
         });
     }
 
+    componentDidMount() {
+        this.props.fetchDishes();
+    }
+
     render() {
         document.title='Menu';
-        const menu = this.props.dishes.map(item => {
+        if (this.props.dishes.isLoading) {
             return (
-                <MenuItem
-                    key={item.id}
-                    dish={item}
-                    DishSelect={ ()=> this.onDishSelect(item) }
-                />
-            );
-        });
-
-        let dishDetail = null;
-        if (this.state.selectedDish !== null) {
-            const comments = this.props.comments.filter(comment => comment.dishId === this.state.selectedDish.id);
-            dishDetail = <DishDetail
-                dish = { this.state.selectedDish }
-                comments = { comments }
-                addComment = {this.props.addComment}
-            />
-        }
-
-        return (
-            <div className="container">
-                <div className="row">
-                    <CardColumns>
-                        {menu}
-                    </CardColumns>
-                    <Modal isOpen={this.state.modalOpen} >
-                        <ModalBody>
-                            {dishDetail}
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="secondary" onClick={this.toggleModal}>Close</Button>
-                        </ModalFooter>
-                    </Modal>
+                <div>
+                    <Loading />
                 </div>
-            </div>
-        );
+            );
+        } else {
+            const menu = this.props.dishes.dishes.map(item => {
+                return (
+                    <MenuItem
+                        key={item.id}
+                        dish={item}
+                        DishSelect={ ()=> this.onDishSelect(item) }
+                    />
+                );
+            });
+
+            let dishDetail = null;
+            if (this.state.selectedDish !== null) {
+                const comments = this.props.comments.filter(comment => comment.dishId === this.state.selectedDish.id);
+                dishDetail = <DishDetail
+                    dish = { this.state.selectedDish }
+                    comments = { comments }
+                    addComment = {this.props.addComment}
+                />
+            }
+
+            return (
+                <div className="container">
+                    <div className="row">
+                        <CardColumns>
+                            {menu}
+                        </CardColumns>
+                        <Modal isOpen={this.state.modalOpen} >
+                            <ModalBody>
+                                {dishDetail}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="secondary" onClick={this.toggleModal}>Close</Button>
+                            </ModalFooter>
+                        </Modal>
+                    </div>
+                </div>
+            );
+        }
     }
 }
 
