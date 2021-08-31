@@ -2,6 +2,9 @@ import React, { Component }  from 'react';
 import { Button, FormGroup, Label, Col, Card, CardBody, CardHeader } from "reactstrap";
 import { Form, Control, Errors, actions } from 'react-redux-form';
 import { connect } from "react-redux";
+import axios from 'axios';
+import { baseUrl } from "../../redux/baseUrl";
+import { Alert } from 'reactstrap';
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -16,8 +19,42 @@ const isNumber = val => !isNaN(Number(val));
 const validEmail = val => /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/i.test(val);
 
 class Contact extends Component {
+    state = {
+        alertShow: false,
+        alertText: null,
+        alertType: null
+    }
+
     handleSubmit = values => {
-        console.log(values);
+        // console.log(values);
+        axios.post(baseUrl + 'feedback', values)
+            .then(response => response.status)
+            .then(status => {
+                if (status === 201) {
+                    this.setState({
+                        alertShow: true,
+                        alertText: 'Submitted successful',
+                        alertType: "success"
+                    });
+                    setTimeout(() => {
+                        this.setState({
+                            alertShow: false
+                        })
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                this.setState({
+                    alertShow: true,
+                    alertText: error.message,
+                    alertType: "danger"
+                });
+                setTimeout(() => {
+                    this.setState({
+                        alertShow: false
+                    })
+                }, 2000);
+            })
         this.props.resetFeedbackForm();
     }
 
@@ -31,6 +68,7 @@ class Contact extends Component {
                             <CardHeader>
                              <h3 className="text-center py-3">Send us your Feedback</h3>
                             </CardHeader>
+                            <Alert isOpen = {this.state.alertShow} color={this.state.alertType} >{this.state.alertText}</Alert>
                             <CardBody>
                                 <Form model="feedback" onSubmit={(values) => this.handleSubmit(values)}>
                                     <FormGroup row>
