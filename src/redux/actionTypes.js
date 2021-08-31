@@ -2,3 +2,6 @@
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const LOAD_DISHES = "LOAD_DISHES";
 export const DISHES_LOADING = "LOADING_DISHES";
+
+export const COMMENT_LOADING = "COMMENT_LOADING";
+export const LOAD_COMMENTS = "LOAD_COMMENTS";

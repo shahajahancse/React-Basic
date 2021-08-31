@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Loading from "./loading";
+import Loading from "./Loading";
 
 class Home extends Component {
     render() {

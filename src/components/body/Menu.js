@@ -3,8 +3,8 @@ import MenuItem from "./MenuItem";
 import DishDetail from "./DishDetail";
 import {CardColumns, Modal, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { connect } from "react-redux";
-import { addComment, fetchDishes } from "../../redux/actionCreators";
-import Loading from "./loading";
+import { addComment, fetchDishes, fetchComments } from "../../redux/actionCreators";
+import Loading from "./Loading";
 
 // map state to props
 const mapStateToProps = state => {
@@ -18,7 +18,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         addComment: (dishId,author,rating,comment) => dispatch(addComment(dishId,author,rating,comment)),
-        fetchDishes: () => dispatch(fetchDishes())
+        fetchDishes: () => dispatch(fetchDishes()),
+        fetchComments: () => dispatch(fetchComments())
     }
 }
 
@@ -44,6 +45,7 @@ class Menu extends Component {
 
     componentDidMount() {
         this.props.fetchDishes();
+        this.props.fetchComments();
     }
 
     render() {
@@ -67,11 +69,12 @@ class Menu extends Component {
 
             let dishDetail = null;
             if (this.state.selectedDish !== null) {
-                const comments = this.props.comments.filter(comment => comment.dishId === this.state.selectedDish.id);
+                const comments = this.props.comments.comments.filter(comment => comment.dishId === this.state.selectedDish.id);
                 dishDetail = <DishDetail
                     dish = { this.state.selectedDish }
                     comments = { comments }
-                    addComment = {this.props.addComment}
+                    addComment = {this.props.addComment }
+                    commentsIsLoading = { this.props.comments.isLoading }
                 />
             }
 
